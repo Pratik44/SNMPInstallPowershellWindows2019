@@ -1,0 +1,16 @@
+
+            $Error.Clear()
+            $PermittedManagers = @("<>")
+            $CommunityString = "<>"
+            $null = Install-WindowsFeature -Name 'SNMP-Service', 'RSAT-SNMP'
+            $i = 1
+            foreach ($manager in $PermittedManagers) {
+                                $null = New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\services\SNMP\Parameters\PermittedManagers" -Name $i -Value $manager
+                                $i++
+                            }
+                            $null = New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\services\SNMP\Parameters\ValidCommunities" -Name $CommunityString -Value 4 -PropertyType DWORD
+                            $null = New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\services\SNMP\Parameters" -Name "TrapConfiguration"
+                            $null = New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Services\SNMP\Parameters\TrapConfiguration" -Name $CommunityString
+                            $null = New-ItemProperty -Path  "HKLM:\SYSTEM\CurrentControlSet\Services\SNMP\Parameters\TrapConfiguration\<communityString>" -Name "1" -Value "127.0.0.1" 
+            if($Error.Count -ne 0){$Error | Out-File "C:\SNMP_install_log.log"}
+            else{"Script Successful" | Out-File "C:\SNMP_install_log.log"}
